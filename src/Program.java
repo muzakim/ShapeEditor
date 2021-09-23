@@ -6,11 +6,6 @@ import java.util.ArrayList;
 
 public class Program extends PApplet {
 
-    int mouseX = 0;
-    int mouseY = 0;
-
-    int shapeMode = 1;
-
     ArrayList<Shape> shapeList;
 
     // 1, 2, 3, 4, 5, 6 ... 9
@@ -53,23 +48,7 @@ public class Program extends PApplet {
     @Override
     public void keyPressed(KeyEvent keyEvent) {
         super.keyPressed(keyEvent);
-
-        switch (keyEvent.getKeyCode()) {
-            case '1': {
-                shapeMode = 1;
-                break;
-            }
-
-            case '2': {
-                shapeMode = 2;
-                break;
-            }
-
-            case '3': {
-                shapeMode = 3;
-                break;
-            }
-        }
+        shapeList.add(createShape(keyEvent.getKeyCode()));
     }
 
     @Override
@@ -77,7 +56,6 @@ public class Program extends PApplet {
         super.mousePressed(mouseEvent);
         this.mouseX = mouseEvent.getX();
         this.mouseY = mouseEvent.getY();
-        shapeList.add(createShape());
 
         System.out.println("mouse clicked " + mouseX + ", " + mouseY);
     }
@@ -85,30 +63,13 @@ public class Program extends PApplet {
     @Override
     public void draw() {
         shapeList.forEach((shape -> shape.draw(this)));
-
-//        for (Shape shape : shapeList) {
-//            shape.draw(this);
-//        }
-
-//        this.ellipse(400, 300, 100, 200);
-//
-//        Triangle triangle = new Triangle(100, 100);
-//        triangle.draw(this);
-//
-//        Circle circle = new Circle(500, 500);
-//        circle.draw(this);
-//
-//        Rectangle rect = new Rectangle(100, 100);
-//        rect.draw(this);
-
     }
 
-    public Shape createShape() {
-
+    public Shape createShape(int shapeMode) {
         switch (shapeMode) {
-            case 0:
+            case '1':
                 return new Triangle(mouseX, mouseY);
-            case 1:
+            case '2':
                 return new Circle(mouseX, mouseY);
             default:
                 return new Rectangle(mouseX, mouseY);
