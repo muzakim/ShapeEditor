@@ -1,7 +1,19 @@
 import processing.core.PApplet;
 
 abstract class Shape {
+
+    protected ClickListener clickListener;
+
     abstract void draw(PApplet pApplet);
+
+    boolean isClicked(int mouseX, int mouseY) {
+        if (clickListener != null) {
+            clickListener.onClicked(mouseX, mouseY);
+        }
+        return true;
+    }
+
+    abstract void move(int x, int y);
 }
 
 class Triangle extends Shape {
@@ -20,10 +32,21 @@ class Triangle extends Shape {
     void draw(PApplet pApplet) {
         System.out.println("draw");
         pApplet.triangle(
-                x - size, y + size,
-                x, y,
-                x + size, y + size
+                x - size, y + size / 2f,
+                x, y - size / 2f,
+                x + size, y + size / 2f
         );
+    }
+
+    @Override
+    boolean isClicked(int mouseX, int mouseY) {
+        super.isClicked(mouseX, mouseY);
+        return false;
+    }
+
+    @Override
+    void move(int x, int y) {
+
     }
 
     public int getX() {
@@ -58,6 +81,17 @@ class Circle extends Shape {
     void draw(PApplet pApplet) {
         pApplet.ellipse(x, y, size, size);
     }
+
+    @Override
+    boolean isClicked(int mouseX, int mouseY) {
+        super.isClicked(mouseX, mouseY);
+        return false;
+    }
+
+    @Override
+    void move(int x, int y) {
+
+    }
 }
 
 class Rectangle extends Shape {
@@ -73,6 +107,23 @@ class Rectangle extends Shape {
 
     @Override
     void draw(PApplet pApplet) {
-        pApplet.rect(x + size, y - size, size, size);
+        pApplet.rect(
+                x - size / 2f, y - size / 2f,
+                size, size
+        );
     }
+
+    @Override
+    boolean isClicked(int mouseX, int mouseY) {
+        super.isClicked(mouseX, mouseY);
+        System.out.println(this + " rect clicked" + "(" + mouseX + ", " + mouseY + ")" + CollisionDetector.isRectCollision(mouseX, mouseY, x, y, size));
+        return CollisionDetector.isRectCollision(mouseX, mouseY, x, y, size);
+    }
+
+    @Override
+    void move(int x, int y) {
+        this.x = x;
+        this.y = y;
+    }
+
 }

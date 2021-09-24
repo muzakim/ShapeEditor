@@ -6,7 +6,10 @@ import java.util.ArrayList;
 
 public class Program extends PApplet {
 
-    ArrayList<Shape> shapeList;
+    private ArrayList<Shape> shapeList;
+    private Shape pressedShape;
+    private Toast toast;
+
 
     // 1, 2, 3, 4, 5, 6 ... 9
     // int[] numbers = malloc()
@@ -44,11 +47,16 @@ public class Program extends PApplet {
         shapeList = new ArrayList<>();
     }
 
-
     @Override
     public void keyPressed(KeyEvent keyEvent) {
         super.keyPressed(keyEvent);
-        shapeList.add(createShape(keyEvent.getKeyCode()));
+        Shape shape = createShape(keyEvent.getKeyCode());
+        // 전략 패턴
+        shape.clickListener = (mouseX, mouseY) -> {
+            System.out.println("clicked" + mouseX + ", + mouseY");
+            createToast();
+        };
+        shapeList.add(shape);
     }
 
     @Override
@@ -62,7 +70,33 @@ public class Program extends PApplet {
 
     @Override
     public void draw() {
+        background(255);
         shapeList.forEach((shape -> shape.draw(this)));
+
+        if (mousePressed) {
+            for (Shape shape : shapeList) {
+                if (shape.isClicked(mouseX, mouseY)) {
+                    pressedShape = shape;
+                }
+            }
+        }
+
+        if (!mousePressed) {
+            pressedShape = null;
+        }
+
+        if (mousePressed && pressedShape != null) {
+            pressedShape.move(mouseX, mouseY);
+        }
+
+        if (toast != null) {
+            toast.show(this);
+            toast.incrementCount();
+        }
+
+        if (toast != null && toast.isFinish()) {
+            toast = null;
+        }
     }
 
     public Shape createShape(int shapeMode) {
@@ -74,6 +108,10 @@ public class Program extends PApplet {
             default:
                 return new Rectangle(mouseX, mouseY);
         }
+    }
+
+    private void createToast() {
+        toast = new Toast("toast!!", 300);
     }
 
     public static void main(String[] args) {
